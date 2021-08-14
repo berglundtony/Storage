@@ -1,0 +1,109 @@
+﻿@model Tuple<ProductViewModel, IEnumerable<ProductViewModel>>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Index</h1>
+
+<form asp-controller="Products" asp-action="Search" method="get" class="col-sm-12 col-md-12  col-lg-12 float-right p-2">
+    <div class="form-row">
+        <div class="col mr-2">
+            <input type="text" name="name" class="form-control" placeholder="Sök på namn:" />
+        </div>
+        <div class="col mr-2">
+            <div class="dropdown-group mb-6">
+                <!--div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Category</label>
+                </div-->
+                <input type="text" name="category" class="dropdown-toggle form-control" id="textfieldcategory" autocomplete="off" data-toggle="dropdown" area-expanded="true" placeholder="Sök på kategori:" />
+                <ul class="dropdown-menu mb-6" id="ddCat" role="menu" araia-labeledby="dropdowncategory">
+                    @foreach (var i in Model.Item1.CategoryDropDown)
+                    {
+                        <li>
+                            <a href="#" data-selected-id="@i.Value" class="dropdowncat">
+                                @i.Text
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-dark" value="Sök" />
+    </div>
+</form>
+
+<div class="col-sm-3 float-right">
+    <form asp-controller="Products" asp-action="Search" method="get">
+    </form>
+</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table p-4">
+    <thead>
+        <tr>
+            <th>
+                Namn
+            </th>
+            <th>
+                Kategori
+            </th>
+            <th>
+                Pris
+            </th>
+            <th>
+                Antal
+            </th>
+            <th>
+                Lagervärde
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Item2)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Count)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InventoryValue)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.Item2.Count() == 0) 
+{ 
+    <p class="text-center">No result</p>
+}
+<script>
+    $(function () {
+        $('.dropdown-toggle').dropdown();
+
+        $(".dropdown-menu li a.dropdowncat").on("click", function (e) {
+            e.preventDefault();
+            $('#textfieldcategory').removeAttr('placeholder');
+            let selectedtext = $(this).text().trim();
+            $(this).closest('.dropdown-group').find('#textfieldcategory').val(selectedtext);
+            $('#textfieldcategory').append('<span class="glyphicon glyphicon-menu-down pull-right"></span>')
+            $(this).parents('.dropdown-menu').find('li').removeClass('active');
+            $(this).parent('li').addClass('active');
+      
+        });
+    });
+    </script>
